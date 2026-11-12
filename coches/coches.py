@@ -93,6 +93,13 @@ class Coches:
                  conexion.commit()
                  return True
             except:
-                 False
+                 return False
 
+     @staticmethod
+     def buscar(id):
+        try:
+             cursor.execute("Select * from coches where id=%s", (id,))
+             return cursor.fetchall()
+        except:
+             return []
  

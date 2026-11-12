@@ -17,11 +17,6 @@ class App:
         for widget in self.ventana.winfo_children():
             widget.destroy()
     
-    # def menu_acciones(self,tipo):
-    #     print(f"\n\t\t\t...::: Menu de {tipo} :::... \n")
-    #     opcion=input("\n\t 1.- Agregar \n\t 2.- Borrar \n\t 3.- Modificar \n\t 4.- Mostrar \n\t 5.- Salir \n \t\tElige una Opcion: ").strip().lower()
-    #     return opcion
-    
     # ...VISTAS
 
     def menu_acciones(self):
@@ -81,8 +76,11 @@ class App:
         self.id=Entry(self.ventana)
         self.id.focus()
         self.id.pack(pady=5)
+        self.btn_buscar=Button(self.ventana, text="Buscar", command=lambda: self.buscar_controller("Eliminar"))
+        self.btn_buscar.pack(pady=5)
 
-        Button(self.ventana,text="Eliminar",command=lambda: {self.eliminar_controller(), self.eliminar_view()}).pack(pady=10)
+        self.btn_eliminar=Button(self.ventana,text="Eliminar",state="disabled",command=lambda: {self.eliminar_controller(), self.eliminar_view()})
+        self.btn_eliminar.pack(pady=5)
         Button(self.ventana,text="Regresar",command=self.menu_acciones).pack(pady=10)
 
     def modificar_view(self):
@@ -129,7 +127,26 @@ class App:
         Label(self.ventana,text=f"{filas}").pack(pady=5)
         Button(self.ventana,text="Regresar",command=self.menu_acciones).pack(pady=5)
 
+    def cambiar_estado_btn(self, estado, tipo_accion):
+        if estado:
+            if tipo_accion =="Eliminar":
+                self.btn_eliminar.config(state="normal")
+            elif tipo_accion=="Modificar":
+                self.btn_modificar.config(state="normal")
+        else: 
+            if tipo_accion=="Eliminar":
+                self.btn_eliminar.config(state="disabled")
+            elif tipo_accion=="Modificar":
+                self.btn_modificar.config(state="disabled")
 
+    def confirmacion_eliminar(self,tipo):
+        resp=messagebox.askquestion(title="... ¡Atencion! ...",message=f"... ¿Desea {tipo} este registro? ...")
+        if resp =="yes":
+            return True
+        else:
+            return False
+
+    #Controladores
     def insertar_controller(self):
         coche1 = coches.Coches(self.marca.get(),self.color.get(),self.modelo.get(),self.velocidad.get(),self.potencia.get(),self.asientos.get())
         respuesta = coche1.insertar()
@@ -138,7 +155,11 @@ class App:
 
     def eliminar_controller(self):
         id=self.id.get()
-        respuesta=coches.Coches.eliminar(id)
+        resp=self.confirmacion_eliminar("eliminar")
+        if resp:
+            respuesta=coches.Coches.eliminar(id)
+        else:
+            respuesta=False
         self.respuesta_sql(respuesta)
 
     def consultar_controller(self):
@@ -165,11 +186,21 @@ class App:
         else:
             input("accion no exitosa")
             messagebox.showerror(title="Verifica por favor",message="accion no exitosa")
-                
+
+    def buscar_controller(self, tipo_accion):
+        id=self.id.get()
+        coche1=coches.Coches.buscar(id)
+        if len(coche1)>0:
+            messagebox.showinfo(title="... ¡Registro Encontrado! ...", message=f"... ¡El registro fue encontrado con exito, puedes {tipo_accion}! ...")
+            self.cambiar_estado_btn(True, tipo_accion)
+
+        else:
+            messagebox.showerror(title="... ¡Verifica por favor !...", message=f"... ¡EL registro no fue encontrado, no es posile {tipo_accion}!...")
+            self.cambiar_estado_btn(False, tipo_accion)
     
 if __name__=="__main__":
     ventana=Tk()
     app=App(ventana)
     ventana.mainloop()
 
-#balsamiq 
+#balsamiq  
