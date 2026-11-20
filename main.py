@@ -25,8 +25,30 @@ class App:
     
     # ...VISTAS
 
+    def barraMenu(self):
+        menuBar= Menu(self.ventana)
+        self.ventana.config(menu=menuBar)
+
+        menuPrincipal = Menu(menuBar, tearoff=False)
+        menuBar.add_cascade(label="Principal", menu=menuPrincipal)
+        menuPrincipal.add_command(label="Menu Principal", command=self.main)
+        menuPrincipal.add_command(label = "Menu Acciones", command=self.menu_acciones)
+        menuPrincipal.add_separator()
+        menuPrincipal.add_command(label = "Salir", command = self.ventana.quit)
+
+        accionesMenu = Menu(menuBar, tearoff = False)
+        menuBar.add_cascade(label = "Acciones", menu = accionesMenu)
+        accionesMenu.add_command(label= "Agregar", command = self.insertar_view)
+        accionesMenu.add_command(label= "Borrar", command = self.eliminar_view)
+        accionesMenu.add_command(label= "Modificar", command = self.modificar_view)
+        accionesMenu.add_command(label= "Mostrar", command = self.consultar_view)
+        menuPrincipal.add_separator()
+        accionesMenu.add_command(label= "Regresar", command = self.main)
+
+
     def menu_acciones(self):
         self.borrarPantalla()
+        self.barraMenu()
         tipo="Coches"
         Label(self.ventana,text=f"\n\t\t\t...::: Menu de {tipo} :::... \n").pack(pady=10)
         Button(self.ventana,text="1.-Agregar",command=self.insertar_view).pack(pady=5)
@@ -37,12 +59,14 @@ class App:
                 
     def main(self):
         self.borrarPantalla()
+        self.barraMenu()
         Label(self.ventana,text="\n\t M E N U  P R I N C I P A L ").pack(pady=10)
         Button(self.ventana,text="1.-Coches",command=self.menu_acciones).pack(pady=5)
         Button(self.ventana,text="2.-Salir",command=self.ventana.quit).pack(pady=5)
 
     def insertar_view(self):
         self.borrarPantalla()
+        self.barraMenu()
         Label(self.ventana,text="... Ingresar datos del Coche...").pack(pady=10)
         
         Label(self.ventana,text="Marca").pack(pady=5)
@@ -76,6 +100,7 @@ class App:
 
     def eliminar_view(self):
         self.borrarPantalla()
+        self.barraMenu()
         Label(self.ventana,text="... Ingresar el ID del Coche a Eliminar...").pack(pady=10)
         
         Label(self.ventana,text="ID").pack(pady=5)
@@ -93,7 +118,7 @@ class App:
 
     def modificar_view(self):
         self.borrarPantalla()
-
+        self.barraMenu()
         self.var_marca=StringVar()
         self.var_color=StringVar()
         self.var_modelo=StringVar()
@@ -148,6 +173,7 @@ class App:
 
     def consultar_view(self):
         self.borrarPantalla()
+        self.barraMenu()
         Label(self.ventana,text="::: Consultar los Coches :::").pack(pady=10)
 
         filas=self.consultar_controller()
