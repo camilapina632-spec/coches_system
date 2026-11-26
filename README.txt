@@ -1,0 +1,1 @@
+ayuda, hace mucho frío
